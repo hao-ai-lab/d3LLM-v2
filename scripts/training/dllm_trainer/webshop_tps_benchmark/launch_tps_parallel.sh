@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Run seven independent single-GPU WebShop TPS benchmarks on two allocations.
+# Run independent single-GPU WebShop TPS benchmarks on two allocations. The model paths are given by the environment
+# variables of run_tps_suite.sh; HEAD_MODELS and WORKER_MODELS list the models run on each allocation.
 
 set -euo pipefail
 
@@ -8,6 +9,8 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/Misc/common_env.sh"
 HEAD_JOB_ID=${HEAD_JOB_ID:-5788}
 WORKER_JOB_ID=${WORKER_JOB_ID:-5789}
+HEAD_MODELS=${HEAD_MODELS:-"sdar_base distill"}
+WORKER_MODELS=${WORKER_MODELS:-"qwen3"}
 BENCH_SECONDS=${BENCH_SECONDS:-300}
 WARMUP_GENERATIONS=${WARMUP_GENERATIONS:-1}
 TARGET_EPISODES=${TARGET_EPISODES:-0}
@@ -55,8 +58,8 @@ fi
 
 mkdir -p "${RESULTS_DIR}"
 echo "[TPS SUITE] results=${RESULTS_DIR}"
-echo "[TPS SUITE] job ${HEAD_JOB_ID}: sdar_base d1 espo gdpo"
-echo "[TPS SUITE] job ${WORKER_JOB_ID}: bgpo distill qwen3"
+echo "[TPS SUITE] job ${HEAD_JOB_ID}: ${HEAD_MODELS}"
+echo "[TPS SUITE] job ${WORKER_JOB_ID}: ${WORKER_MODELS}"
 
 child_pids=()
 cleanup() {
@@ -68,10 +71,10 @@ cleanup() {
 trap cleanup TERM INT
 
 srun --jobid="${HEAD_JOB_ID}" --overlap --nodes=1 --ntasks=1 \
-  bash "${BASH_SOURCE[0]}" --worker sdar_base d1 espo gdpo &
+  bash "${BASH_SOURCE[0]}" --worker ${HEAD_MODELS} &
 child_pids+=("$!")
 srun --jobid="${WORKER_JOB_ID}" --overlap --nodes=1 --ntasks=1 \
-  bash "${BASH_SOURCE[0]}" --worker bgpo distill qwen3 &
+  bash "${BASH_SOURCE[0]}" --worker ${WORKER_MODELS} &
 child_pids+=("$!")
 
 failed=0
@@ -86,13 +89,13 @@ if [[ "${failed}" -ne 0 ]]; then
   exit 1
 fi
 
-"${PYTHON}" - "${RESULTS_DIR}" <<'PY'
+"${PYTHON}" - "${RESULTS_DIR}" "${HEAD_MODELS} ${WORKER_MODELS}" <<'PY'
 import csv
 import sys
 from pathlib import Path
 
 root = Path(sys.argv[1])
-expected = {"sdar_base", "d1", "espo", "gdpo", "bgpo", "distill", "qwen3"}
+expected = set(sys.argv[2].split())
 with (root / "summary.csv").open(newline="", encoding="utf-8") as handle:
     rows = list(csv.DictReader(handle))
 found = {row["model"] for row in rows if row.get("completed_window") == "True"}
@@ -102,4 +105,4 @@ if missing:
 print(root / "summary.csv")
 PY
 
-echo "[DONE] all seven benchmarks completed"
+echo "[DONE] all benchmarks completed"

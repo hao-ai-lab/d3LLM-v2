@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SDAR-8B ALFWorld LoRA online trajectory distillation.
-# The teacher/student initialization uses step 150 of the ALFWorld GDPO run.
+# MODEL_PATH is the merged RL checkpoint (global_step_*/actor_merged_hf) used as teacher and student initialization.
 
 set -euo pipefail
 set -x
@@ -17,11 +17,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/Misc/common_env.sh"
 cd "${REPO_ROOT}"
 
-SOURCE_CKPT=${SOURCE_CKPT:-"${REPO_ROOT}/checkpoints/verl_dllm/alfworld_sdar8b_b4_gdpo_mc3_5788_20260919_084012/global_step_150"}
-SOURCE_ACTOR="${SOURCE_CKPT}/actor"
-MODEL_CODE_DIR=${MODEL_CODE_DIR:-"${REPO_ROOT}/dLLM_sft/sfted_models/SDAR-8B-Chat-sfted-alfworld"}
-DEFAULT_MODEL_PATH="${SOURCE_CKPT}/actor_merged_hf"
-MODEL_PATH=${MODEL_PATH:-"${DEFAULT_MODEL_PATH}"}
+MODEL_PATH=${MODEL_PATH:?set MODEL_PATH to the merged RL checkpoint (global_step_*/actor_merged_hf) to distill}
 TRAINER_YAML=${TRAINER_YAML:-"${REPO_ROOT}/verl/trainer/config/ppo_trainer.yaml"}
 ROLLOUT_YAML=${ROLLOUT_YAML:-"${REPO_ROOT}/verl/trainer/config/sdar_dllm.yaml"}
 
@@ -49,39 +45,9 @@ export GLOO_TIMEOUT_MS=${GLOO_TIMEOUT_MS:-10800000}
 unset RAY_ADDRESS
 mkdir -p "${FLASHINFER_CACHE_DIR}" "${RAY_TMPDIR}" "${REPO_ROOT}/temp/invalid"
 
-# SGLang requires a complete HF-format base model. Merge the FSDP shards on the first run.
-# The checkpoint saver did not copy modeling_sdar.py, so restore it from the
-# original HF model before invoking the merger.
-model_is_ready() {
-  [[ -f "${MODEL_PATH}/config.json" ]] &&
-    { [[ -f "${MODEL_PATH}/model.safetensors" ]] ||
-      [[ -f "${MODEL_PATH}/model.safetensors.index.json" ]] ||
-      [[ -f "${MODEL_PATH}/pytorch_model.bin" ]] ||
-      [[ -f "${MODEL_PATH}/pytorch_model.bin.index.json" ]]; }
-}
-
-if ! model_is_ready; then
-  if [[ "${MODEL_PATH}" == "${DEFAULT_MODEL_PATH}" && "${AUTO_MERGE_SOURCE:-1}" == "1" && -d "${SOURCE_ACTOR}" ]]; then
-    if [[ ! -f "${SOURCE_ACTOR}/modeling_sdar.py" ]]; then
-      if [[ ! -f "${MODEL_CODE_DIR}/modeling_sdar.py" ]]; then
-        echo "ERROR: modeling_sdar.py not found in model code directory: ${MODEL_CODE_DIR}" >&2
-        exit 1
-      fi
-      cp "${MODEL_CODE_DIR}/modeling_sdar.py" "${SOURCE_ACTOR}/modeling_sdar.py"
-    fi
-    echo "=== Merging source FSDP checkpoint: ${SOURCE_ACTOR} ==="
-    "${PYTHON}" scripts/Misc/model_merger.py merge \
-      --backend fsdp \
-      --local_dir "${SOURCE_ACTOR}" \
-      --target_dir "${MODEL_PATH}"
-    if ! model_is_ready; then
-      echo "ERROR: merged model is incomplete: ${MODEL_PATH}" >&2
-      exit 1
-    fi
-  else
-    echo "ERROR: complete model weights not found: ${MODEL_PATH}" >&2
-    exit 1
-  fi
+if [[ ! -f "${MODEL_PATH}/config.json" ]]; then
+  echo "ERROR: model not found: ${MODEL_PATH}" >&2
+  exit 1
 fi
 
 lora_rank=${LORA_RANK:-64}

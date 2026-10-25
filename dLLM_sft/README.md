@@ -29,4 +29,4 @@ bash dLLM_sft/AR/run_sft.sh webshop-qwen2.5-7b                # Qwen2.5-7B-Instr
 bash dLLM_sft/d3LLM/run_sft.sh webshop-llada-8b               # d3LLM_LLaDA-sfted-webshop
 ```
 
-See the [repository README](../README.md#4-sft-optional) for the options.
+See the [repository README](../README.md#sft-optional) for the options.

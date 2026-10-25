@@ -9,7 +9,7 @@ ENGINE=${1:-sglang}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/Misc/common_env.sh"
-MODEL_PATH=${MODEL_PATH:-"${REPO_ROOT}/checkpoints/verl_dllm/webshop_8b_espo/global_step_150/actor_merged_hf"}
+MODEL_PATH=${MODEL_PATH:?set MODEL_PATH to the merged RL checkpoint (global_step_*/actor_merged_hf) to distill}
 TRAINER_YAML="${REPO_ROOT}/verl/trainer/config/ppo_trainer.yaml"
 
 export PYTHONPATH="${REPO_ROOT}/sglang_dllm/python:${PYTHONPATH:-}"

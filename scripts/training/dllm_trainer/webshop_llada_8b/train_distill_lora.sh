@@ -17,7 +17,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/Misc/common_env.sh"
 cd "${REPO_ROOT}"
 
-MODEL_PATH=${MODEL_PATH:-"${REPO_ROOT}/checkpoints/verl_dllm/dllm_webshop_d3llada8b_reason_tags_gdpo_gauss-3_seq_5708_20260901_120731/global_step_120/actor_merged_hf"}
+MODEL_PATH=${MODEL_PATH:?set MODEL_PATH to the merged RL checkpoint (global_step_*/actor_merged_hf) to distill}
 ROLLOUT_YAML=${ROLLOUT_YAML:-"${REPO_ROOT}/verl/trainer/config/llada.yaml"}
 
 for required_path in \

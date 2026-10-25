@@ -10,7 +10,7 @@ ENGINE=${1:-sglang}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/Misc/common_env.sh"
-MODEL_PATH=${MODEL_PATH:-"${REPO_ROOT}/checkpoints/verl_dllm/search_8b_b8_espo_gdpo_mc3_5788_20260909_062202/global_step_200/actor_merged_hf"}
+MODEL_PATH=${MODEL_PATH:?set MODEL_PATH to the merged RL checkpoint (global_step_*/actor_merged_hf) to distill}
 TRAINER_YAML="${REPO_ROOT}/verl/trainer/config/ppo_trainer.yaml"
 # LC algorithm config（b8 单 block LowConfidence）
 LC_CFG="${REPO_ROOT}/verl/trainer/config/sdar_bs8.yaml"

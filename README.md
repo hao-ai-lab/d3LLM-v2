@@ -87,7 +87,7 @@ done
 hf download d3LLM/d3LLM_LLaDA --include "*.safetensors" --local-dir verl/models/d3LLM_LLaDA
 ```
 
-All released models are listed in our [HuggingFace](https://huggingface.co/d3LLM). Search has no SFT stage, so its RL starts directly from the base models.
+The released distilled models are in the [d3LLM-v2 collection](https://huggingface.co/collections/d3LLM/d3llm-v2): `SDAR-8B-Chat-distill-{webshop,alfworld,search}`, `SDAR-4B-Chat-distill-{webshop,search}`, `SDAR-8B-Chat-b8-distill-{webshop,search}`, `SDAR-4B-Chat-b16-distill-search` and `d3LLM_LLaDA-distill-webshop`. Search has no SFT stage, so its RL starts directly from the base models.
 
 ## 🏋️‍♀️ Training d3LLM-v2 Models
 
@@ -105,12 +105,12 @@ bash scripts/training/dllm_trainer/alfworld_sdar_8b_b4/train_rl.sh  # ALFWorld
 
 ### Stage 2: Online Self-Distillation
 
-Distillation starts from a HuggingFace RL model, given by `MODEL_PATH`. Use a released RL model, or merge your own RL checkpoint first (see [FAQ](#-faq)).
+Distillation starts from the HuggingFace model of your own Stage 1 RL run, given by `MODEL_PATH`. Merge the RL checkpoint first (see [FAQ](#-faq)); the merged model is saved to `<ckpt>/actor_merged_hf`.
 
 ```bash
-MODEL_PATH=checkpoints/released_rl/SDAR-8B-Chat-rl-webshop \
+MODEL_PATH=checkpoints/verl_dllm/<webshop_rl_experiment>/global_step_150/actor_merged_hf \
   bash scripts/training/dllm_trainer/webshop_sdar_8b_b4/train_distill.sh        # WebShop
-MODEL_PATH=checkpoints/released_rl/SDAR-8B-Chat-rl-alfworld \
+MODEL_PATH=checkpoints/verl_dllm/<alfworld_rl_experiment>/global_step_150/actor_merged_hf \
   bash scripts/training/dllm_trainer/alfworld_sdar_8b_b4/train_distill_lora.sh  # ALFWorld (LoRA)
 ```
 
@@ -128,11 +128,12 @@ bash dLLM_sft/AR/run_sft.sh alfworld-qwen3-8b     # Qwen3-8B-sfted-alfworld
 
 ## 🧪 Evaluation
 
-`eval_both.sh` evaluates the latest checkpoint of a training run. Set `origin=True` to evaluate a HuggingFace model instead, such as our released distilled models.
+`eval_both.sh` evaluates the latest checkpoint of a training run. Set `origin=True` to evaluate a HuggingFace model given by `MODEL_PATH` instead, such as our released distilled models.
 
 ```bash
 EVAL_CKPT_DIR=checkpoints/verl_dllm/<experiment> \
   bash scripts/training/dllm_trainer/webshop_sdar_8b_b4/eval_both.sh both
+hf download d3LLM/SDAR-8B-Chat-distill-webshop --local-dir checkpoints/released_distill/SDAR-8B-Chat-distill-webshop
 origin=True MODEL_PATH=checkpoints/released_distill/SDAR-8B-Chat-distill-webshop \
   bash scripts/training/dllm_trainer/webshop_sdar_8b_b4/eval_both.sh both
 ```

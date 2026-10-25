@@ -15,7 +15,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 source "${REPO_ROOT}/scripts/Misc/common_env.sh"
 cd "${REPO_ROOT}"
 
-MODEL_PATH=${MODEL_PATH:-"${REPO_ROOT}/checkpoints/verl_dllm_old/webshop_8b_espo/global_step_150/actor_merged_hf"}
+MODEL_PATH=${MODEL_PATH:?set MODEL_PATH to the merged RL checkpoint (global_step_*/actor_merged_hf) to distill}
 TRAINER_YAML=${TRAINER_YAML:-"${REPO_ROOT}/verl/trainer/config/ppo_trainer.yaml"}
 LC_CFG=${LC_CFG:-"${REPO_ROOT}/verl/trainer/config/sdar_dllm.yaml"}
 CONDA_ENV_PREFIX=${CONDA_ENV_PREFIX:-${ENV_PREFIX}}
