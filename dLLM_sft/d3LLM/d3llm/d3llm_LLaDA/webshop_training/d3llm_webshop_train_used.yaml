@@ -1,0 +1,55 @@
+data:
+  max_length: 4096
+  messages_key: messages
+  train_files: /raid/qyy/Codes/efficient-verl-agent/data/distill/webshop_qwen2.5_7b_gigpo_step200/sft_success_llada.parquet
+  val_files: /raid/qyy/Codes/efficient-verl-agent/data/distill/webshop_qwen2.5_7b_gigpo_step200/sft_success_llada_val.parquet
+  val_ratio: 0.0
+distillation:
+  entropy_weight: 2.0
+  max_length: 4096
+  max_mask_ratio: 0.8
+  min_mask_ratio: 0.0
+  num_proc: 8
+  progressive_block_sizes:
+  - 16
+  - 24
+  - 32
+  temperature: 0.5
+  trajectory_dataset_path: 'null'
+  use_complementary_loss: true
+  use_naive_random_mask: true
+lora:
+  bias: none
+  enabled: true
+  lora_alpha: 256
+  lora_dropout: 0.0
+  r: 256
+  target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+  task_type: CAUSAL_LM
+model:
+  name: d3LLM/d3LLM_LLaDA
+  torch_dtype: bfloat16
+  trust_remote_code: true
+training:
+  bf16: true
+  gradient_accumulation_steps: 4
+  group_by_length: false
+  learning_rate: 2.0e-05
+  logging_first_step: true
+  logging_steps: 10
+  lr_scheduler_type: cosine
+  max_grad_norm: 1
+  num_train_epochs: 3
+  optim: adamw_torch
+  output_dir: /raid/qyy/Codes/efficient-verl-agent/checkpoints/d3llm_webshop_sft
+  per_device_train_batch_size: 2
+  report_to: none
+  save_strategy: epoch
+  weight_decay: 0.01

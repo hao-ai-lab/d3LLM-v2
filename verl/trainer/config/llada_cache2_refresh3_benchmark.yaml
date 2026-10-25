@@ -1,0 +1,8 @@
+# LLaDA FullAttnMultiBlock config for the cache-delay/refresh benchmark.
+# Keep all other benchmark decoding settings identical to llada_benchmark.yaml.
+threshold: 0.45
+block_add_threshold: 1.0
+decoded_token_threshold: 1.0
+cache_delay_iter: 2
+refresh_interval: 3
+record_decode_order: false

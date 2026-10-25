@@ -1,0 +1,7 @@
+# LLaDA FullAttnMultiBlock config for exactly one decoded token per forward.
+threshold: 0.0
+block_add_threshold: 1.0
+decoded_token_threshold: 1.0
+cache_delay_iter: 1
+refresh_interval: 1
+record_decode_order: true

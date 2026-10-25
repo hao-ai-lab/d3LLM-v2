@@ -1,0 +1,90 @@
+# AUP Benchmark Data
+# Format: task -> method -> list of (rho, accuracy) pairs
+# rho: parallelism (tokens per forward)
+# accuracy: model accuracy (0-1 scale)
+
+GSM8K-CoT:
+  Qwen-2.5-7B-it:
+  - [1.0, 74.1]
+  LLaDA:
+  - [1.0, 72.55]
+  Fast-dLLM-LLaDA:
+  - [1.0, 74.79]
+  - [2.77, 74.68]
+  D2F:
+  - [1.0, 74.98]
+  - [2.88, 74.39]
+  dParallel-LLaDA:
+  - [1.0, 74.0]
+  - [5.14, 72.63]
+  d3LLM-LLaDA:
+  - [1.0, 74.02]
+  - [9.11, 73.09]
+MATH:
+  Qwen-2.5-7B-it:
+  - [1.0, 41.15]
+  LLaDA:
+  - [1.0, 32.2]
+  Fast-dLLM-LLaDA:
+  - [1.0, 32.1]
+  - [1.97, 30.82]
+  D2F:
+  - [1.0, 29.1]
+  - [2.66, 28.94]
+  dParallel-LLaDA:
+  - [1.0, 32.0]
+  - [3.17, 30.18]
+  d3LLM-LLaDA:
+  - [1.0, 32.76]
+  - [5.74, 30.36]
+MBPP:
+  Qwen-2.5-7B-it:
+  - [1.0, 63.6]
+  LLaDA:
+  - [1.0, 41.72]
+  Fast-dLLM-LLaDA:
+  - [1.0, 41.58]
+  - [2.13, 38.6]
+  D2F:
+  - [1.0, 39.10]
+  - [2.13, 39.00]
+  dParallel-LLaDA:
+  - [1.0, 41.62]
+  - [2.35, 40.0]
+  d3LLM-LLaDA:
+  - [1.0, 42.0]
+  - [4.21, 40.60]
+HumanEval:
+  Qwen-2.5-7B-it:
+  - [1.0, 67.73]
+  LLaDA:
+  - [1.0, 38.28]
+  Fast-dLLM-LLaDA:
+  - [1.0, 38.16]
+  - [2.56, 37.8]
+  D2F:
+  - [1.0, 41.02]
+  - [2.69, 40.64]
+  dParallel-LLaDA:
+  - [1.0, 39.68]
+  - [4.93, 39.02]
+  d3LLM-LLaDA:
+  - [1.0, 39.8]
+  - [5.95, 39.63]
+Long-GSM8K:
+  Qwen-2.5-7B-it:
+  - [1.0, 82.56]
+  LLaDA:
+  - [1.0, 78.58]
+  Fast-dLLM-LLaDA:
+  - [1.0, 78.45]
+  - [2.45, 78.01]
+  D2F:
+  - [1.0, 76.00]
+  - [2.7, 75.66]
+  dParallel-LLaDA:
+  - [1.0, 79.15]
+  - [4.49, 76.65]
+  d3LLM-LLaDA:
+  - [1.0, 78.32]
+  - [6.95, 74.22]

@@ -1,0 +1,9 @@
+# DREAM dLLM algorithm config for SGLang rollout — trajectory noisy backend
+# Same as dream.yaml but with record_decode_order enabled.
+# record_decode_order: true is required for the "trajectory" noisy backend.
+threshold: 0.4
+block_add_threshold: 1.0
+decoded_token_threshold: 1.0
+cache_delay_iter: 1
+refresh_interval: 1
+record_decode_order: true

@@ -1,0 +1,56 @@
+# d3llm_train.yaml - DREAM distillation configuration
+model:
+    name: "Dream-org/Dream-Coder-v0-Instruct-7B"
+    trust_remote_code: true
+    torch_dtype: "bfloat16"
+
+training:
+    output_dir: "output_model/d3LLM_DREAM_Coder"
+    num_train_epochs: 3
+    gradient_accumulation_steps: 4
+    per_device_train_batch_size: 4
+    logging_steps: 10
+    learning_rate: 0.000002
+    weight_decay: 0.01
+    bf16: True
+    optim: "adamw_torch"
+    warmup_ratio: 0.05
+    max_grad_norm: 1
+    group_by_length: false
+    lr_scheduler_type: "cosine"
+    save_strategy: "epoch"
+    # W&B logging configuration
+    report_to: "wandb"
+    run_name: "d3llm_dream_coder_training"
+    logging_first_step: true
+
+# LoRA configuration (optional, disabled by default)
+lora:
+    enabled: false # Set to true to enable LoRA training
+    r: 16
+    lora_alpha: 16
+    target_modules:
+        - "q_proj"
+        - "k_proj"
+        - "v_proj"
+        - "o_proj"
+        - "gate_proj"
+        - "up_proj"
+        - "down_proj"
+    lora_dropout: 0.0
+    bias: "none"
+    task_type: "CAUSAL_LM"
+
+distillation:
+    trajectory_dataset_path: "~/Codes/d3LLM/trajectory_output_dream_coder_32_multi_try_512_120k/trajectory_dataset"
+    max_length: 1000 # Maximum sequence length for training, 432 + 508 + 60 = 1000, 60 is reserved length for template
+    max_samples: null # Maximum number of samples for training (null = use all data, set to e.g. 1000 for quick testing)
+    use_blockwise_loss: true # If true: compute loss only on one block; if false: entire response
+    use_naive_random_mask: false # If true: use naive random masking baseline instead of trajectory selection
+    use_complementary_loss: false # If true: add complementary CE loss (dParallel style)
+    progressive_block_sizes: [16, 24, 32] # Block sizes for each epoch
+    min_mask_ratio: 0.0 # Min mask ratio for progressive training
+    max_mask_ratio: 0.8 # Max mask ratio for progressive training
+    temperature: 0.5
+    entropy_weight: 1.0
+    num_proc: 32

@@ -1,0 +1,4 @@
+# SDAR dLLM algorithm config (block_size=4, smaller than LLaDA2.1's 32)
+threshold: 0.95
+block_size: 4
+record_decode_order: true

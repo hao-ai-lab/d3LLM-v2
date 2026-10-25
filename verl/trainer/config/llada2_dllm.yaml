@@ -1,0 +1,5 @@
+# LLaDA 2.1 dLLM algorithm config for SGLang rollout
+# Used with dllm_algorithm="LowConfidence" (or EntropyThreshold)
+threshold: 0.95
+block_size: 32
+record_decode_order: true

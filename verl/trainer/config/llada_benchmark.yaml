@@ -1,0 +1,9 @@
+# LLaDA FullAttnMultiBlock config for throughput benchmarks.
+# Decode-order collection is disabled because it is diagnostic metadata and is
+# not consumed by rollout inference.
+threshold: 0.45
+block_add_threshold: 1.0
+decoded_token_threshold: 1.0
+cache_delay_iter: 1
+refresh_interval: 1
+record_decode_order: false

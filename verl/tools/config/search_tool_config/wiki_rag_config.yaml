@@ -1,0 +1,23 @@
+tools:
+  - class_name: verl.tools.search_tool.SearchTool
+    config:
+      num_workers: 120
+      rate_limit: 120
+      timeout: 30
+      # Replace with your wiki RAG server address (see Agent/tool_servers/wiki_server/launch_rag_server.sh)
+      retrieval_service_url: "http://localhost:8008/retrieve"
+    tool_schema:
+      type: function
+      function:
+        name: wiki_search
+        description: Searches the web for relevant information based on the given query.
+        parameters:
+          type: object
+          properties:
+            query_list:
+              type: array
+              items:
+                type: string
+              description: list of queries to search
+          required:
+            - query_list

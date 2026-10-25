@@ -1,0 +1,37 @@
+# AUP Benchmark Data
+# Format: task -> method -> list of (rho, accuracy) pairs
+# rho: parallelism (tokens per forward)
+# accuracy: model accuracy (0-1 scale)
+
+HumanEval:
+  Qwen2.5-Coder-7B:
+  - [1.0, 86.6]
+  Dream-Coder-7B:
+  - [1.0, 82.9]
+  d3LLM-Coder-7B:
+  - [1.0, 82.4]
+  - [2.88, 79.7]
+HumanEval+:
+  Qwen2.5-Coder-7B:
+  - [1.0, 82.3]
+  Dream-Coder-7B:
+  - [1.0, 76.8]
+  d3LLM-Coder-7B:
+  - [1.0, 74.4]
+  - [2.88, 71.3]
+MBPP:
+  Qwen2.5-Coder-7B:
+  - [1.0, 83.5]
+  Dream-Coder-7B:
+  - [1.0, 79.9]
+  d3LLM-Coder-7B:
+  - [1.0, 80.10]
+  - [2.5, 80.00]
+MBPP+:
+  Qwen2.5-Coder-7B:
+  - [1.0, 70.1]
+  Dream-Coder-7B:
+  - [1.0, 68.8]
+  d3LLM-Coder-7B:
+  - [1.0, 69.6]
+  - [2.5, 69.3]

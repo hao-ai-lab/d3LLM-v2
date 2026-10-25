@@ -1,0 +1,14 @@
+# LLaDA dLLM algorithm config for SGLang rollout
+# Used with dllm_algorithm="FullAttnMultiBlock" (or LowConfidence / EntropyThreshold)
+threshold: 0.45
+block_add_threshold: 1.0
+decoded_token_threshold: 1.0
+cache_delay_iter: 1
+refresh_interval: 1
+record_decode_order: True
+# true 时 FullAttnMultiBlock 记录每个 request item 0 的完整解码过程到文件
+# 对 loss/训练无影响；训练时建议改为 false
+#record_decode_order: true
+# 解码过程持久化路径（JSONL，每行一个 request 的完整解码序列）
+# 留空则写入 /tmp/decode_order.jsonl
+#decode_order_output_path: "decode_order_think_first.jsonl"

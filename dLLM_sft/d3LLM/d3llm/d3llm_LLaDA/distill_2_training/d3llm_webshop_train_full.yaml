@@ -1,0 +1,43 @@
+# WebShop full SFT on d3LLM_LLaDA (block-wise naive random mask, no trajectory)
+model:
+    name: "d3LLM/d3LLM_LLaDA"
+    trust_remote_code: true
+    torch_dtype: "bfloat16"
+
+training:
+    output_dir: "output_model/d3LLM_LLaDA_WebShop_SFT_full_half_epoch2"
+    num_train_epochs: 3
+    gradient_accumulation_steps: 2
+    per_device_train_batch_size: 2
+    logging_steps: 10
+    learning_rate: 0.00001
+    weight_decay: 0.01
+    bf16: True
+    optim: "adamw_torch"
+    max_grad_norm: 1
+    group_by_length: false
+    lr_scheduler_type: "cosine"
+    save_strategy: "epoch"
+    report_to: "none"
+    logging_first_step: true
+
+lora:
+    enabled: false
+
+data:
+    train_files: ""
+    val_files: ""
+    format: auto
+    success_only: true
+
+distillation:
+    trajectory_dataset_path: null
+    max_length: 4096
+    use_naive_random_mask: true
+    use_complementary_loss: true
+    progressive_block_sizes: [32,32]
+    min_mask_ratio: 0.0
+    max_mask_ratio: 0.8
+    temperature: 0.5
+    entropy_weight: 2.0
+    num_proc: 8

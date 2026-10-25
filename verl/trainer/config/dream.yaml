@@ -1,0 +1,7 @@
+# LLaDA 2.1 dLLM algorithm config for SGLang rollout
+# Used with dllm_algorithm="LowConfidence" (or EntropyThreshold)
+threshold: 0.4
+cache_delay_iter: 1
+refresh_interval: 10000
+
+

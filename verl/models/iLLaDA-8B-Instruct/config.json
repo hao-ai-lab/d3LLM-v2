@@ -1,0 +1,37 @@
+{
+  "architectures": [
+    "ILLaDAForCausalLM"
+  ],
+  "auto_map": {
+    "AutoConfig": "configuration_illada.ILLaDAConfig",
+    "AutoModel": "modeling_illada.ILLaDAForCausalLM",
+    "AutoModelForCausalLM": "modeling_illada.ILLaDAForCausalLM"
+  },
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "bos_token_id": 0,
+  "dtype": "bfloat16",
+  "eos_token_id": 2,
+  "hidden_act": "silu",
+  "hidden_size": 4096,
+  "initializer_range": 0.013975424859373685,
+  "intermediate_size": 14336,
+  "layer_norm_eps": null,
+  "max_position_embeddings": 8192,
+  "mlp_bias": false,
+  "model_type": "illada",
+  "num_attention_heads": 32,
+  "num_hidden_layers": 32,
+  "num_key_value_heads": 8,
+  "resid_pdrop": 0.0,
+  "rms_norm_eps": 1e-05,
+  "rope_scaling": {
+    "factor": 1.0,
+    "rope_type": "default"
+  },
+  "rope_theta": 10000.0,
+  "tie_word_embeddings": true,
+  "transformers_version": "4.57.1",
+  "torch_dtype": "bfloat16",
+  "vocab_size": 155136
+}

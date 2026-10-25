@@ -1,0 +1,59 @@
+# WebShop SFT on iLLaDA-8B-Instruct using Qwen3-8B GRPO distillation data
+model:
+    name: "GSAI-ML/iLLaDA-8B-Instruct"
+    trust_remote_code: true
+    torch_dtype: "bfloat16"
+
+training:
+    output_dir: "output_model/d3LLM_iLLaDA_WebShop_SFT_Qwen3"
+    num_train_epochs: 3
+    gradient_accumulation_steps: 4
+    per_device_train_batch_size: 2
+    logging_steps: 10
+    learning_rate: 0.00002
+    weight_decay: 0.01
+    bf16: True
+    optim: "adamw_torch"
+    max_grad_norm: 1
+    group_by_length: false
+    lr_scheduler_type: "cosine"
+    save_strategy: "epoch"
+    report_to: "none"
+    logging_first_step: true
+
+lora:
+    enabled: true
+    r: 256
+    lora_alpha: 256
+    target_modules:
+        - "q_proj"
+        - "k_proj"
+        - "v_proj"
+        - "o_proj"
+        - "gate_proj"
+        - "up_proj"
+        - "down_proj"
+    lora_dropout: 0.0
+    bias: "none"
+    # iLLaDA 是扩散模型，无 prepare_inputs_for_generation，不能用 CAUSAL_LM
+    # FEATURE_EXTRACTION 不检查该方法，LoRA 权重挂载完全相同
+    task_type: "FEATURE_EXTRACTION"
+
+data:
+    train_files: ""
+    val_files: ""
+    format: auto
+    success_only: true
+
+distillation:
+    trajectory_dataset_path: null
+    # qwen3 生成时 MAX_RESPONSE_LENGTH=768，加上 prompt 开销，设 1024 足够覆盖大多数样本
+    max_length: 1024
+    use_naive_random_mask: true
+    use_complementary_loss: true
+    progressive_block_sizes: [16, 24, 32]
+    min_mask_ratio: 0.0
+    max_mask_ratio: 0.8
+    temperature: 0.5
+    entropy_weight: 2.0
+    num_proc: 8

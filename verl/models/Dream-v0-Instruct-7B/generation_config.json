@@ -1,0 +1,15 @@
+{
+  "_from_model_config": true,
+  "alg": "origin",
+  "alg_temp": null,
+  "bos_token_id": 151643,
+  "eos_token_id": 151643,
+  "eps": 0.001,
+  "mask_token_id": null,
+  "output_history": false,
+  "pad_token_id": 151643,
+  "steps": 512,
+  "top_k": null,
+  "top_p": null,
+  "transformers_version": "4.46.2"
+}

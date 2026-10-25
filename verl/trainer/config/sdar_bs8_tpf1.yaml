@@ -1,0 +1,4 @@
+# SDAR dLLM algorithm config for block_size=8 with tpf1 decoding.
+threshold: 1.0
+block_size: 8
+record_decode_order: true

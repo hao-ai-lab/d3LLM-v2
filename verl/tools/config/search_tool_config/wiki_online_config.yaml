@@ -1,0 +1,22 @@
+tools:
+  - class_name: verl.tools.wikipedia_tool.WikipediaTool
+    config:
+      top_k_results: 3
+      doc_content_chars_max: 4000
+      lang: "en"
+      timeout: 30
+    tool_schema:
+      type: function
+      function:
+        name: wiki_search
+        description: Searches Wikipedia for relevant information based on the given query.
+        parameters:
+          type: object
+          properties:
+            query_list:
+              type: array
+              items:
+                type: string
+              description: list of queries to search
+          required:
+            - query_list

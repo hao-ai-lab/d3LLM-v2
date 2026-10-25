@@ -1,0 +1,25 @@
+.idea
+.vscode
+# data
+__pycache__/
+logs/
+wandb/
+evals_results/
+.hf_cache/
+try.py
+trajectory_output/
+output_model/
+output_models/
+sample_llada.json
+output_reproduce/
+eval_results/
+eval_tmp/
+eval_results_llada/
+d3llm_train_used.yaml
+d3llm/d3llm_DREAM/distill_2_training/d3llm_train_used.yaml
+d3llm/d3llm_LLaDA/distill_2_training/d3llm_train_used.yaml
+cache/
+coder_data/
+.gradio
+null/
+*.pkl
