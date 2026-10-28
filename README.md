@@ -69,7 +69,7 @@ conda activate verl-dllm-agent
 Install the agentic environments that you need. Each script works in the main environment and skips the steps that are already done.
 
 ```bash
-bash scripts/environment_setup/setup_webshop.sh   # WebShop: product catalog, spaCy, Java
+bash scripts/environment_setup/setup_webshop.sh   # WebShop: product catalog, spaCy, Java, search index
 bash scripts/environment_setup/setup_alfworld.sh  # ALFWorld: game files in ~/.cache/alfworld
 bash scripts/environment_setup/setup_search.sh    # Search: data, e5 index and a separate `retriever` env
 ```

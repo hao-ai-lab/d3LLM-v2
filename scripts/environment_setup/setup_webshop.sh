@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Prepare the WebShop environment: product catalog (from HuggingFace), spaCy models and OpenJDK.
+# Prepare the WebShop environment: product catalog (from HuggingFace), spaCy models, OpenJDK and Lucene search indexes.
 # Run install_verl_agent_new.sh first.
 #
 # Optional environment variables:
@@ -22,12 +22,12 @@ if [[ ! -x "$PYTHON" ]]; then
   exit 1
 fi
 
-echo ">>> [1/3] Product catalog -> ${WEBSHOP_DIR}/data"
+echo ">>> [1/4] Product catalog -> ${WEBSHOP_DIR}/data"
 "$PYTHON" -c "
 from huggingface_hub import snapshot_download
 snapshot_download('d3LLM/webshop_catalog', repo_type='dataset', local_dir='${WEBSHOP_DIR}/data')"
 
-echo ">>> [2/3] spaCy models"
+echo ">>> [2/4] spaCy models"
 if ! "$PYTHON" -c "import en_core_web_lg, en_core_web_sm" 2>/dev/null; then
   # The wheels are git-ignored; download them from the spaCy release page when missing.
   for model in lg sm; do
@@ -41,8 +41,18 @@ if ! "$PYTHON" -c "import en_core_web_lg, en_core_web_sm" 2>/dev/null; then
   done
 fi
 
-echo ">>> [3/3] OpenJDK"
+echo ">>> [3/4] OpenJDK"
 [[ -x "${ENV_PREFIX}/lib/jvm/bin/java" ]] || \
   $CONDA install -c conda-forge openjdk=25.0.1 -n "$ENV_NAME" -y
+
+echo ">>> [4/4] Lucene search indexes -> ${WEBSHOP_DIR}/search_engine/indexes*"
+# The documents (search_engine/resources*) are tracked in git; the indexes are generated from them and git-ignored.
+SEARCH_DIR=${WEBSHOP_DIR}/search_engine
+if [[ -d "${SEARCH_DIR}/indexes" && -d "${SEARCH_DIR}/indexes_100" && -d "${SEARCH_DIR}/indexes_1k" && -d "${SEARCH_DIR}/indexes_100k" ]]; then
+  echo "indexes already exist, skipped"
+else
+  (cd "${SEARCH_DIR}" && \
+    JAVA_HOME="${ENV_PREFIX}/lib/jvm" PATH="$(dirname "$PYTHON"):${ENV_PREFIX}/lib/jvm/bin:${PATH}" bash run_indexing.sh)
+fi
 
 echo ">>> WebShop is ready."
