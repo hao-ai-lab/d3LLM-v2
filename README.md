@@ -93,9 +93,24 @@ The released distilled models are in the [d3LLM-v2 collection](https://huggingfa
 
 All scripts are in [scripts/training/dllm_trainer/](./scripts/training/dllm_trainer/), with one folder per task and backbone. They use 4 GPUs by default and save outputs to `checkpoints/verl_dllm/<experiment>/`. The examples below use SDAR-8B (block size 4).
 
-### Stage 1: Agentic RL
+### Stage 1: SFT
 
-On WebShop and ALFWorld, RL starts from the SFT checkpoint. On Search, it starts from the base model.
+WebShop and ALFWorld start with SFT, which gives the model the output format of the agent. Search has no SFT stage and goes directly to Stage 2 from the base model.
+
+The SFT code and data are in [dLLM_sft/](./dLLM_sft/). SDAR and the Qwen baselines use LlamaFactory in a separate environment, which the script creates on first run. d3LLM-LLaDA and iLLaDA use the main environment. The SFT models are saved to `dLLM_sft/sfted_models/<name>`, where Stage 2 reads them.
+
+```bash
+bash dLLM_sft/SDAR/run_sft.sh webshop-8b-b4       # SDAR-8B-Chat-sfted-webshop
+bash dLLM_sft/SDAR/run_sft.sh alfworld-8b-b4      # SDAR-8B-Chat-sfted-alfworld
+bash dLLM_sft/d3LLM/run_sft.sh webshop-llada-8b   # d3LLM_LLaDA-sfted-webshop
+bash dLLM_sft/AR/run_sft.sh alfworld-qwen3-8b     # Qwen3-8B-sfted-alfworld
+```
+
+> **Note:** Before SDAR SFT, link the downloaded weights into the SFT model folders: `ln -sf "$PWD"/verl/models/$m/*.safetensors dLLM_sft/SDAR/training/model/$m/`.
+
+### Stage 2: Agentic RL
+
+On WebShop and ALFWorld, RL starts from the SFT model of Stage 1. On Search, it starts from the base model.
 
 ```bash
 bash scripts/training/dllm_trainer/webshop_sdar_8b_b4/train_rl.sh   # WebShop
@@ -103,9 +118,9 @@ bash scripts/training/dllm_trainer/search_sdar_8b_b4/train_rl.sh    # Search
 bash scripts/training/dllm_trainer/alfworld_sdar_8b_b4/train_rl.sh  # ALFWorld
 ```
 
-### Stage 2: Online Self-Distillation
+### Stage 3: Online Self-Distillation
 
-Distillation starts from the HuggingFace model of your own Stage 1 RL run, given by `MODEL_PATH`. Merge the RL checkpoint first (see [FAQ](#-faq)); the merged model is saved to `<ckpt>/actor_merged_hf`.
+Distillation starts from the HuggingFace model of your own Stage 2 RL run, given by `MODEL_PATH`. Merge the RL checkpoint first (see [FAQ](#-faq)); the merged model is saved to `<ckpt>/actor_merged_hf`.
 
 ```bash
 MODEL_PATH=checkpoints/verl_dllm/<webshop_rl_experiment>/global_step_150/actor_merged_hf \
@@ -113,18 +128,6 @@ MODEL_PATH=checkpoints/verl_dllm/<webshop_rl_experiment>/global_step_150/actor_m
 MODEL_PATH=checkpoints/verl_dllm/<alfworld_rl_experiment>/global_step_150/actor_merged_hf \
   bash scripts/training/dllm_trainer/alfworld_sdar_8b_b4/train_distill_lora.sh  # ALFWorld (LoRA)
 ```
-
-### SFT (Optional)
-
-The SFT code and data are in [dLLM_sft/](./dLLM_sft/). SDAR and the Qwen baselines use LlamaFactory in a separate environment, which the script creates on first run. d3LLM-LLaDA and iLLaDA use the main environment.
-
-```bash
-bash dLLM_sft/SDAR/run_sft.sh webshop-8b-b4       # SDAR-8B-Chat-sfted-webshop
-bash dLLM_sft/d3LLM/run_sft.sh webshop-llada-8b   # d3LLM_LLaDA-sfted-webshop
-bash dLLM_sft/AR/run_sft.sh alfworld-qwen3-8b     # Qwen3-8B-sfted-alfworld
-```
-
-> **Note:** Before SDAR SFT, link the downloaded weights into the SFT model folders: `ln -sf "$PWD"/verl/models/$m/*.safetensors dLLM_sft/SDAR/training/model/$m/`.
 
 ## 🧪 Evaluation
 
